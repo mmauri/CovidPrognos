@@ -56,7 +56,7 @@
                         <RadzenSelectBar Name="SatO2" @bind-Value=@Patient.SaO2Below90PercAtAdmission TValue="bool?">
                             <Items>
                                 <RadzenSelectBarItem Text="< 90%" Value="true" />
-                                <RadzenSelectBarItem Text=">= 90%" Value="false" />
+                                <RadzenSelectBarItem Text="≥ 90%" Value="false" />
                             </Items>
                         </RadzenSelectBar>
                         <RadzenRequiredValidator Component="SatO2" Text="O2 saturation is required" Popup=@popup />
@@ -71,7 +71,7 @@
                         <RadzenSelectBar Name="CRP" @bind-Value=@Patient.CRPGreater112mglAtAdmission TValue="bool?">
                             <Items>
                                 <RadzenSelectBarItem Text="< 112" Value="false" />
-                                <RadzenSelectBarItem Text=">= 112" Value="true" />
+                                <RadzenSelectBarItem Text="≥ 112" Value="true" />
                             </Items>
                         </RadzenSelectBar>
                         <RadzenRequiredValidator Component="CRP" Text="C-reactive protein level is required" Popup=@popup />

@@ -5,10 +5,10 @@
 @using Models
 
 <div class="row">
-    <div class="col-8 align-middle">
+    <div class="col-6 text-left">
         <h3>Patients</h3>
     </div>
-    <div class="col-4 text-right">
+    <div class="col-6 text-right">
         <RadzenButton Text="Add" ButtonStyle="ButtonStyle.Primary" Click="@AddPatient" />
         @*<RadzenButton Text="Load" ButtonStyle="ButtonStyle.Primary" Click="@LoadData" />*@
     </div>
@@ -127,9 +127,9 @@
         var notification = new NotificationMessage()
         {
             Severity = score < 50 ? NotificationSeverity.Success : NotificationSeverity.Error,
-            Summary = "NPR Risk Score",
-            Detail = $"Confidence score: {score}%",
-            Duration = 8000 //4 secs
+            Summary = "NPR RIMScore",
+            Detail = $"Score: {score}%",
+            Duration = 8000 //8 secs
         };
         notificationService.Notify(notification);
 
