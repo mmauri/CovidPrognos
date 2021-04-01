@@ -1,15 +1,26 @@
 ﻿@page "/"
 @inject Blazored.LocalStorage.ISyncLocalStorageService localStorage
 @inject DialogService dialogService
+@inject NotificationService notificationService
 @using Models
 
-<h1>Patients</h1>
-<RadzenButton Text="Add" ButtonStyle="ButtonStyle.Info" Icon="plus" Click="@AddPatient" />
-<RadzenButton Text="SaveTestLocalStorage" Click="@SaveTestLocalStorage" />
+<div class="row">
+    <div class="col-8 align-middle">
+        <h3>Patients</h3>
+    </div>
+    <div class="col-4 text-right">
+        <RadzenButton Text="Add" ButtonStyle="ButtonStyle.Primary" Click="@AddPatient" />
+        @*<RadzenButton Text="Load" ButtonStyle="ButtonStyle.Primary" Click="@LoadData" />*@
+    </div>
+</div>
+<span>
+    Only use for confirmed PCR patients
+</span>
+@*<RadzenButton Text="SaveTestLocalStorage" Click="@SaveTestLocalStorage" />*@
 
-<RadzenGrid @ref="grid" Count="@patientsCount" LoadData="@LoadData" Data="@patients" TItem="Patient" Responsive="false" RowSelect="@((args) => OnPatientRowSelected(args))">
+<RadzenGrid @ref="grid" Data="@patients" TItem="Patient" AllowSorting="true" Responsive="false" RowSelect="@((args) => OnPatientRowSelected(args))">
     <Columns>
-        <RadzenGridColumn TItem="Patient" Property="PatientId" Title="Id">
+        <RadzenGridColumn TItem="Patient" Property="Name" Title="Patient">
         </RadzenGridColumn>
         <RadzenGridColumn TItem="Patient" Property="AdmissionDate" Title="Admission date" Width="100px;">
             <Template Context="item">
@@ -18,9 +29,16 @@
         </RadzenGridColumn>
         <RadzenGridColumn TItem="Patient" Property="Age" Title="Age">
         </RadzenGridColumn>
-        <RadzenGridColumn TItem="Patient" Property="Score" Title="Risk">
-            <Template Context="item">
-                @item.NPRScore
+        <RadzenGridColumn TItem="Patient" Property="Score" Title="Risk score">
+            <Template Context="data">
+                @if (data.NPRScore < 50)
+                {
+                    <span>@data.NPRScore %</span>
+                }
+                else
+                {
+                    <span style='color:red'>@data.NPRScore %</span>
+                }
             </Template>
         </RadzenGridColumn>
 </Columns>
@@ -28,16 +46,18 @@
 
 
 @code {
-    List<Patient> patients;
-    int patientsCount;
+    List<Patient> patients = new List<Patient>();
+    
+    bool addingPatient = false;
     RadzenGrid<Patient> grid;
 
     //BUG: Blazor WASM cannot debug on the first component Initialized event
-    //protected override async Task OnInitializedAsync()
-    //{
-    //}
+    protected override async Task OnInitializedAsync()
+    {
+        LoadData(); 
+    }
 
-    async Task LoadData(LoadDataArgs args)
+    void LoadData()
     {
         string patientKey;
         Patient patient;
@@ -45,7 +65,6 @@
         var length = localStorage.Length();
         if (length == 0) return;
 
-        patients = new List<Patient>();
         //localStorage sync access is faster
         for (var i = 0; i < length; i++)
         {
@@ -53,35 +72,99 @@
             patient = localStorage.GetItem<Patient>(patientKey);
             patients.Add(patient);
         }
-        patientsCount = patients.Count();
 
-        await InvokeAsync(StateHasChanged);
+        grid.Reload();
     }
 
     async Task AddPatient()
     {
-
+        addingPatient = true;
+        var id = patients.Count + 1;
+        var patient = new Patient();
+        patient.Id = id;
+        await OnPatientRowSelected(patient);
     }
 
-    void SaveTestLocalStorage()
-    {
-        var pat = new Patient();
-        pat.PatientId = "marc";
-        pat.AdmissionDate = DateTime.Today;
-        pat.Age = 48;
-        pat.IsMale = true;
+    //void SaveTestLocalStorage()
+    //{
+    //    var pat = new Patient();
+    //    pat.PatientId = "marc";
+    //    pat.AdmissionDate = DateTime.Today;
+    //    pat.Age = 48;
+    //    pat.IsMale = true;
 
-        pat.NPRScore = 0.1;
+    //    pat.NPRScore = 0.1;
 
-        localStorage.RemoveItem(pat.PatientId);
+    //    localStorage.RemoveItem(pat.PatientId);
 
-        localStorage.SetItem<Patient>(pat.PatientId, pat);
-    }
+    //localStorage.SetItem<Patient>(pat.PatientId, pat);
+    //}
 
     async Task OnPatientRowSelected(Patient patient)
     {
-        var form = await dialogService.OpenAsync<PatientEdit>("Edit patient", new Dictionary<string, object>() {
+        var res = await dialogService.OpenAsync<PatientEdit>("Edit patient", new Dictionary<string, object>() {
                                                             { "Patient", patient }
                                                });
+        if (res == "Delete")
+        {
+            DeletePatient(patient);
+
+            return;
+        }
+
+
+        //save & update list
+        var score = CalcNPRScore(patient);
+        patient.NPRScore = score;
+        if (addingPatient)
+        {
+            patients.Add(patient);
+            addingPatient = false;
+        }
+        UpdatePatient(patient);
+
+        var notification = new NotificationMessage()
+        {
+            Severity = score < 50 ? NotificationSeverity.Success : NotificationSeverity.Error,
+            Summary = "NPR Risk Score",
+            Detail = $"Confidence score: {score}%",
+            Duration = 8000 //4 secs
+        };
+        notificationService.Notify(notification);
+        await InvokeAsync(() => { StateHasChanged(); });
+
+    }
+
+
+    int CalcNPRScore(Patient patient)
+    {
+        int sexValue = patient.IsMale == true ? 1 : 0;
+        int o2satValue = patient.SaO2Below90PercAtAdmission == true ? 1 : 0;
+        var npr = patient.Neutrophils / patient.Platelets;
+        int nprRatioAbove3 = npr > 3.0 ? 1 : 0;
+        int crpAbove112mgl = patient.CRPGreater112mglAtAdmission == true ? 1 : 0;
+
+        double y = -10.6923 + 0.1006 * (int)patient.Age + 0.5669 * sexValue + 1.0410 * o2satValue + 0.7774 * nprRatioAbove3 + 0.7744 * crpAbove112mgl;
+
+        double score = 1 / (1 + Math.Exp(-y));
+
+        int scoreInt = (int) Math.Round(score * 100, 0);
+
+        return scoreInt;
+
+    }
+
+    void DeletePatient(Patient patient)
+    {
+        patients.Remove(patient);
+        localStorage.RemoveItem(patient.Id.ToString());
+        grid.Reload();
+
+    }
+
+    void UpdatePatient(Patient patient)
+    {
+        localStorage.SetItem<Patient>(patient.Id.ToString(), patient);
+
     }
 }

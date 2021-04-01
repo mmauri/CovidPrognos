@@ -1,70 +1,126 @@
-﻿@using CovidPrognos.Models
+﻿@inject DialogService dialogService
+@using CovidPrognos.Models
 
-<RadzenTemplateForm Data="@Patient">
+<RadzenTemplateForm TItem="Patient" Data="@Patient" Submit="@OnSubmit" InvalidSubmit="@OnInvalidSubmit">
     <div class="row">
-        <div class="col-md-6">
-            <RadzenFieldset Text="General">
+        <div class="col-md-12">
+            <RadzenFieldset Text="General info">
                 <div class="row">
                     <div class="col-md-4 align-items-center d-flex">
-                        <RadzenLabel Text="Patient Id" />
+                        <RadzenLabel Text="Patient" />
                     </div>
                     <div class="col-md-8">
-                        <RadzenTextBox style="width: 100%;" Name="PatientId" @bind-Value="Patient.PatientId"/>
+                        <RadzenTextBox style="width: 100%;" Name="PatientName" @bind-Value="Patient.Name" />
+                        <RadzenRequiredValidator Component="PatientName" Text="Patient is required" Popup=@popup />
                     </div>
                 </div>
-                <div class="row">
+                <div class="row" style="margin-top:6px;">
+                    <div class="col-md-4 align-items-center d-flex">
+                        <RadzenLabel Text="Age" />
+                    </div>
+                    <div class="col-md-8">
+                        <RadzenNumeric Name="Age" @bind-Value="Patient.Age" TValue="int?" Style="width:100%;" />
+                        <RadzenNumericRangeValidator Component="Age" Min="1" Max="110" Text="Age should be between 1 and 110" Popup=@popup  />
+                    </div>
+                </div>
+                <div class="row" style="margin-top:6px;">
                     <div class="col-md-4 align-items-center d-flex">
                         <RadzenLabel Text="Admission Date" />
                     </div>
                     <div class="col-md-8">
-                        <RadzenDatePicker style="width: 100%;" Name="AdmissionDate" @bind-Value="Patient.AdmissionDate" />
+                        <RadzenDatePicker style="width: 100%;" Name="AdmissionDate" @bind-Value="Patient.AdmissionDate"  />
+                        <RadzenRequiredValidator Component="AdmissionDate" Text="Admission date is required" Popup=@popup />
                     </div>
                 </div>
-                <div class="row">
+                <div class="row" style="margin-top:6px;">
                     <div class="col-md-4 align-items-center d-flex">
                         <RadzenLabel Text="Gender" />
                     </div>
                     <div class="col-md-8">
-                        <RadzenSelectBar @bind-Value=@Patient.IsMale TValue="bool">
+                        <RadzenSelectBar Name="Gender" @bind-Value=@Patient.IsMale TValue="bool?">
                             <Items>
                                 <RadzenSelectBarItem Text="Male" Value="true" />
                                 <RadzenSelectBarItem Text="Female" Value="false" />
                             </Items>
                         </RadzenSelectBar>
+                        <RadzenRequiredValidator Component="Gender" Text="Gender is required" Popup=@popup />
                     </div>
                 </div>
             </RadzenFieldset>
             <RadzenFieldset Text="Admission date tests">
                 <div class="row">
                     <div class="col-md-4 align-items-center d-flex">
-                        <RadzenLabel Text="Sat.O2" />
+                        <RadzenLabel Text="O2 Saturation" />
                     </div>
                     <div class="col-md-8">
-                        <RadzenSelectBar @bind-Value=@Patient.SaO2Below90PercAtAdmission TValue="bool">
+                        <RadzenSelectBar Name="SatO2" @bind-Value=@Patient.SaO2Below90PercAtAdmission TValue="bool?">
                             <Items>
-                                <RadzenSelectBarItem Text="<90%" Value="true" />
-                                <RadzenSelectBarItem Text=">=90%" Value="false" />
+                                <RadzenSelectBarItem Text="< 90%" Value="true" />
+                                <RadzenSelectBarItem Text=">= 90%" Value="false" />
                             </Items>
                         </RadzenSelectBar>
+                        <RadzenRequiredValidator Component="SatO2" Text="O2 saturation is required" Popup=@popup />
                     </div>
                 </div>
-                
+                <div class="row" style="margin-top:6px;">
+                    <div class="col-md-4 align-items-center d-flex">
+                        <RadzenLabel Text="C-reactive protein" />
+                    </div>
+                    <div class="col-md-8">
+                        <RadzenSelectBar Name="CRP" @bind-Value=@Patient.CRPGreater112mglAtAdmission TValue="bool?">
+                            <Items>
+                                <RadzenSelectBarItem Text="< 112mg/l" Value="false" />
+                                <RadzenSelectBarItem Text=">= 112mg/l" Value="true" />
+                            </Items>
+                        </RadzenSelectBar>
+                        <RadzenRequiredValidator Component="CRP" Text="C-reactive protein level is required" Popup=@popup />
+                    </div>
+                </div>
+                <div class="row" style="margin-top:6px;">
+                    <div class="col-md-4 align-items-center d-flex">
+                        <RadzenLabel Text="Neutrophils (poner units)" />
+                    </div>
+                    <div class="col-md-8">
+                        <RadzenNumeric Name="Neutrophils" @bind-Value=@Patient.Neutrophils TValue="int"Style="width:100%;" />
+                        <RadzenNumericRangeValidator Component="Neutrophils" Min="1" Text="Neutrophils level should be between 1 and 1000" Popup=@popup  />
+                    </div>
+                </div>
+                <div class="row" style="margin-top:6px;">
+                    <div class="col-md-4 align-items-center d-flex">
+                        <RadzenLabel Text="Platelets (poner units)" />
+                    </div>
+                    <div class="col-md-8">
+                        <RadzenNumeric Name="Platelets" @bind-Value=@Patient.Platelets TValue="int" Style="width:100%;"/>
+                        <RadzenNumericRangeValidator Component="Platelets" Min="1" Text="Platelets level should be between 1 and 1000" Popup=@popup />
+                    </div>
+                </div>
             </RadzenFieldset>
         </div>
     </div>
-    <div class="row justify-content-center">
-        <div class="col-md-12 d-flex align-items-end justify-content-center" style="margin-top: 16px;">
+
+    <div class="row" style="margin-top: 16px;">
+        <div class="col text-left">
+            <RadzenButton ButtonStyle="ButtonStyle.Danger" Text="Delete" Click="@(a=>dialogService.Close("Delete"))" />
+        </div>
+        <div class="col text-right">
             <RadzenButton ButtonType="ButtonType.Submit" Icon="save" Text="Save" />
-            <RadzenButton ButtonStyle="ButtonStyle.Light" Icon="cancel" style="display: inline-block; margin-left: 10px;" Text="Cancel" Click="@Cancel" />
         </div>
     </div>
 </RadzenTemplateForm>
 
 @code {
     [Parameter] public Patient Patient { get; set; }
+    bool popup = false;
 
-    async void Cancel()
+    void OnSubmit(Patient patient)
     {
-
+        dialogService.Close("Update");
     }
-    } 
+    void OnInvalidSubmit(FormInvalidSubmitEventArgs args)
+    {
+        var pp=1;
+    }
+
+
+
+} 
