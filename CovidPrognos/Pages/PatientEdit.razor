@@ -1,7 +1,7 @@
 ﻿@inject DialogService dialogService
 @using CovidPrognos.Models
 
-<RadzenTemplateForm TItem="Patient" Data="@Patient" Submit="@OnSubmit" InvalidSubmit="@OnInvalidSubmit">
+<RadzenTemplateForm TItem="Patient" Data="@Patient" Submit="@OnSubmit">
     <div class="row">
         <div class="col-md-12">
             <RadzenFieldset Text="General info">
@@ -64,7 +64,8 @@
                 </div>
                 <div class="row" style="margin-top:6px;">
                     <div class="col-md-4 align-items-center d-flex">
-                        <RadzenLabel Text="C-reactive protein (mg/L)" />
+                            <RadzenLabel Text="C-reactive protein " />
+                            <small> (mg/l)</small>
                     </div>
                     <div class="col-md-8">
                         <RadzenSelectBar Name="CRP" @bind-Value=@Patient.CRPGreater112mglAtAdmission TValue="bool?">
@@ -78,20 +79,22 @@
                 </div>
                 <div class="row" style="margin-top:6px;">
                     <div class="col-md-4 align-items-center d-flex">
-                        <RadzenLabel Text="Neutrophils (poner units)" />
+                            <RadzenLabel Text="Neutrophils " />
+                            <small> (cells/mmc)</small>
                     </div>
                     <div class="col-md-8">
                         <RadzenNumeric Name="Neutrophils" @bind-Value=@Patient.Neutrophils TValue="int"Style="width:100%;" />
-                        <RadzenNumericRangeValidator Component="Neutrophils" Min="1" Text="Neutrophils level should be between 1 and 1000" Popup=@popup  />
+                        <RadzenNumericRangeValidator Component="Neutrophils" Min="200" Max="10000" Text="Neutrophils level should be between 200 and 10,000" Popup=@popup  />
                     </div>
                 </div>
                 <div class="row" style="margin-top:6px;">
                     <div class="col-md-4 align-items-center d-flex">
-                        <RadzenLabel Text="Platelets (poner units)" />
+                        <RadzenLabel Text="Platelets " />
+                        <small> (cells/mmc)</small>
                     </div>
                     <div class="col-md-8">
                         <RadzenNumeric Name="Platelets" @bind-Value=@Patient.Platelets TValue="int" Style="width:100%;"/>
-                        <RadzenNumericRangeValidator Component="Platelets" Min="1" Text="Platelets level should be between 1 and 1000" Popup=@popup />
+                        <RadzenNumericRangeValidator Component="Platelets" Min="20000" Max="900000" Text="Platelets level should be between 20,000 and 900,000" Popup=@popup />
                     </div>
                 </div>
             </RadzenFieldset>
@@ -116,11 +119,4 @@
     {
         dialogService.Close("Update");
     }
-    void OnInvalidSubmit(FormInvalidSubmitEventArgs args)
-    {
-        var pp=1;
-    }
-
-
-
 } 
