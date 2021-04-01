@@ -47,14 +47,14 @@
 
 @code {
     List<Patient> patients = new List<Patient>();
-    
+
     bool addingPatient = false;
     RadzenGrid<Patient> grid;
 
     //BUG: Blazor WASM cannot debug on the first component Initialized event
     protected override async Task OnInitializedAsync()
     {
-        LoadData(); 
+        LoadData();
     }
 
     void LoadData()
@@ -73,7 +73,7 @@
             patients.Add(patient);
         }
 
-        grid.Reload();
+        //grid.Reload();
     }
 
     async Task AddPatient()
@@ -120,6 +120,7 @@
         {
             patients.Add(patient);
             addingPatient = false;
+            grid.Reload();
         }
         UpdatePatient(patient);
 
@@ -131,7 +132,6 @@
             Duration = 8000 //4 secs
         };
         notificationService.Notify(notification);
-        await InvokeAsync(() => { StateHasChanged(); });
 
     }
 

@@ -28,7 +28,7 @@
                         <RadzenLabel Text="Admission Date" />
                     </div>
                     <div class="col-md-8">
-                        <RadzenDatePicker style="width: 100%;" Name="AdmissionDate" @bind-Value="Patient.AdmissionDate"  />
+                        <RadzenDatePicker style="width: 100%;" Name="AdmissionDate" @bind-Value="Patient.AdmissionDate" DateFormat="d" />
                         <RadzenRequiredValidator Component="AdmissionDate" Text="Admission date is required" Popup=@popup />
                     </div>
                 </div>
@@ -64,13 +64,13 @@
                 </div>
                 <div class="row" style="margin-top:6px;">
                     <div class="col-md-4 align-items-center d-flex">
-                        <RadzenLabel Text="C-reactive protein" />
+                        <RadzenLabel Text="C-reactive protein (mg/L)" />
                     </div>
                     <div class="col-md-8">
                         <RadzenSelectBar Name="CRP" @bind-Value=@Patient.CRPGreater112mglAtAdmission TValue="bool?">
                             <Items>
-                                <RadzenSelectBarItem Text="< 112mg/l" Value="false" />
-                                <RadzenSelectBarItem Text=">= 112mg/l" Value="true" />
+                                <RadzenSelectBarItem Text="< 112" Value="false" />
+                                <RadzenSelectBarItem Text=">= 112" Value="true" />
                             </Items>
                         </RadzenSelectBar>
                         <RadzenRequiredValidator Component="CRP" Text="C-reactive protein level is required" Popup=@popup />
