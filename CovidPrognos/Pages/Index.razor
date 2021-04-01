@@ -1,0 +1,87 @@
+﻿@page "/"
+@inject Blazored.LocalStorage.ISyncLocalStorageService localStorage
+@inject DialogService dialogService
+@using Models
+
+<h1>Patients</h1>
+<RadzenButton Text="Add" ButtonStyle="ButtonStyle.Info" Icon="plus" Click="@AddPatient" />
+<RadzenButton Text="SaveTestLocalStorage" Click="@SaveTestLocalStorage" />
+
+<RadzenGrid @ref="grid" Count="@patientsCount" LoadData="@LoadData" Data="@patients" TItem="Patient" Responsive="false" RowSelect="@((args) => OnPatientRowSelected(args))">
+    <Columns>
+        <RadzenGridColumn TItem="Patient" Property="PatientId" Title="Id">
+        </RadzenGridColumn>
+        <RadzenGridColumn TItem="Patient" Property="AdmissionDate" Title="Admission date" Width="100px;">
+            <Template Context="item">
+                @item.AdmissionDate.ToShortDateString()
+            </Template>
+        </RadzenGridColumn>
+        <RadzenGridColumn TItem="Patient" Property="Age" Title="Age">
+        </RadzenGridColumn>
+        <RadzenGridColumn TItem="Patient" Property="Score" Title="Risk">
+            <Template Context="item">
+                @item.NPRScore
+            </Template>
+        </RadzenGridColumn>
+</Columns>
+</RadzenGrid>
+
+
+@code {
+    List<Patient> patients;
+    int patientsCount;
+    RadzenGrid<Patient> grid;
+
+    //BUG: Blazor WASM cannot debug on the first component Initialized event
+    //protected override async Task OnInitializedAsync()
+    //{
+    //}
+
+    async Task LoadData(LoadDataArgs args)
+    {
+        string patientKey;
+        Patient patient;
+
+        var length = localStorage.Length();
+        if (length == 0) return;
+
+        patients = new List<Patient>();
+        //localStorage sync access is faster
+        for (var i = 0; i < length; i++)
+        {
+            patientKey = localStorage.Key(i);
+            patient = localStorage.GetItem<Patient>(patientKey);
+            patients.Add(patient);
+        }
+        patientsCount = patients.Count();
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+    async Task AddPatient()
+    {
+
+    }
+
+    void SaveTestLocalStorage()
+    {
+        var pat = new Patient();
+        pat.PatientId = "marc";
+        pat.AdmissionDate = DateTime.Today;
+        pat.Age = 48;
+        pat.IsMale = true;
+
+        pat.NPRScore = 0.1;
+
+        localStorage.RemoveItem(pat.PatientId);
+
+        localStorage.SetItem<Patient>(pat.PatientId, pat);
+    }
+
+    async Task OnPatientRowSelected(Patient patient)
+    {
+        var form = await dialogService.OpenAsync<PatientEdit>("Edit patient", new Dictionary<string, object>() {
+                                                            { "Patient", patient }
+                                               });
+    }
+}

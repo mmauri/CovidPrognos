@@ -1,0 +1,49 @@
+﻿@inherits LayoutComponentBase
+<RadzenDialog />
+<RadzenNotification />
+<RadzenTooltip />
+
+<RadzenHeader>
+    <ChildContent>
+        <div class="row justify-content-start align-items-center">
+            <div class="col-6 d-flex align-items-center">
+                <RadzenSidebarToggle Click="@(args => { sidebarExpanded = !sidebarExpanded; bodyExpanded = !bodyExpanded; })">
+                </RadzenSidebarToggle>
+                <RadzenLabel Text="Covid Prognos">
+                </RadzenLabel>
+            </div>
+        </div>
+    </ChildContent>
+</RadzenHeader>
+<div style="width:100%">
+    <RadzenBody @ref="@body0" @bind-Expanded="@bodyExpanded">
+        <ChildContent>
+            <RadzenContentContainer Name="main">
+                @Body
+            </RadzenContentContainer>
+        </ChildContent>
+    </RadzenBody>
+</div>
+<RadzenSidebar @ref="@sidebar0" @bind-Expanded="@sidebarExpanded">
+    <ChildContent>
+        <RadzenPanelMenu>
+            <RadzenPanelMenuItem Text="Home" Path="./" Icon="home" />
+            <RadzenPanelMenuItem Text="About" Icon="accessibility" />
+        </RadzenPanelMenu>
+    </ChildContent>
+</RadzenSidebar>
+@*<RadzenFooter>
+    <ChildContent>
+        <RadzenLabel Text="Radzen Blazor Components, Copyright &copy; 2020">
+        </RadzenLabel>
+        <RadzenLink Text="[source]" Path="https://github.com/radzenhq/radzen-blazor" Target="_blank" Style="margin-left:5px;vertical-align:bottom;" />
+    </ChildContent>
+</RadzenFooter>*@
+
+@code {
+    RadzenSidebar sidebar0;
+    RadzenBody body0;
+    bool sidebarExpanded = false;
+    bool bodyExpanded = true;
+}
+ 
