@@ -21,6 +21,7 @@ namespace CovidPrognos
             builder.Services.AddScoped<NotificationService>();
             builder.Services.AddScoped<TooltipService>();
             //builder.Services.AddScoped<ContextMenuService>();
+            builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
             builder.Services.AddBlazoredLocalStorage();
             await builder.Build().RunAsync();
         }

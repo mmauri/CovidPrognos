@@ -2,32 +2,32 @@
 @inject Blazored.LocalStorage.ISyncLocalStorageService localStorage
 @inject DialogService dialogService
 @inject NotificationService notificationService
+@inject IStringLocalizer<App> Localize
+
 @using Models
 
 <div class="row">
     <div class="col-6 text-left">
-        <h3>Patients</h3>
+        <h3>@Localize["Patients"]</h3>
     </div>
     <div class="col-6 text-right">
-        <RadzenButton Text="Add" ButtonStyle="ButtonStyle.Primary" Click="@AddPatient" />
+        <RadzenButton Text=@Localize["Add"] ButtonStyle="ButtonStyle.Primary" Click="@AddPatient" />
         @*<RadzenButton Text="Load" ButtonStyle="ButtonStyle.Primary" Click="@LoadData" />*@
     </div>
 </div>
 <span>
-    Only use for confirmed PCR patients
+    @Localize["Only use with PCR positive patients"]
 </span>
-@*<RadzenButton Text="SaveTestLocalStorage" Click="@SaveTestLocalStorage" />*@
-
 <RadzenGrid @ref="grid" Data="@patients" TItem="Patient" AllowSorting="true" Responsive="false" RowSelect="@((args) => OnPatientRowSelected(args))">
     <Columns>
-        <RadzenGridColumn TItem="Patient" Property="Name" Title="Patient">
+        <RadzenGridColumn TItem="Patient" Property="Name" Title=@Localize["Patient"]>
         </RadzenGridColumn>
-        <RadzenGridColumn TItem="Patient" Property="AdmissionDate" Title="Admission date" Width="100px;">
+        <RadzenGridColumn TItem="Patient" Property="AdmissionDate" Title=@Localize["Admission date"] Width="100px;">
             <Template Context="item">
                 @item.AdmissionDate.ToShortDateString()
             </Template>
         </RadzenGridColumn>
-        <RadzenGridColumn TItem="Patient" Property="Age" Title="Age">
+        <RadzenGridColumn TItem="Patient" Property="Age" Title=@Localize["Age"]>
         </RadzenGridColumn>
         <RadzenGridColumn TItem="Patient" Property="Score" Title="Risk score">
             <Template Context="data">
@@ -41,7 +41,7 @@
                 }
             </Template>
         </RadzenGridColumn>
-</Columns>
+    </Columns>
 </RadzenGrid>
 
 
@@ -102,9 +102,11 @@
 
     async Task OnPatientRowSelected(Patient patient)
     {
-        var res = await dialogService.OpenAsync<PatientEdit>("Edit patient", new Dictionary<string, object>() {
-                                                            { "Patient", patient }
-                                               });
+        var res = await dialogService.OpenAsync<PatientEdit>(@Localize["Edit"], 
+                                        new Dictionary<string, object>() 
+                                        {
+                                            { "Patient", patient }
+                                        });
         if (res == "Delete")
         {
             DeletePatient(patient);
@@ -148,7 +150,7 @@
 
         double score = 1 / (1 + Math.Exp(-y));
 
-        int scoreInt = (int) Math.Round(score * 100, 0);
+        int scoreInt = (int)Math.Round(score * 100, 0);
 
         return scoreInt;
 
