@@ -143,7 +143,7 @@
         int sexValue = patient.IsMale == true ? 1 : 0;
         int o2satValue = patient.SaO2Below90PercAtAdmission == true ? 1 : 0;
         var npr = patient.Neutrophils / patient.Platelets;
-        int nprRatioAbove3 = npr > 3.0 ? 1 : 0;
+        int nprRatioAbove3 = npr > 0.03 ? 1 : 0;
         int crpAbove112mgl = patient.CRPGreater112mglAtAdmission == true ? 1 : 0;
 
         double y = -10.6923 + 0.1006 * (int)patient.Age + 0.5669 * sexValue + 1.0410 * o2satValue + 0.7774 * nprRatioAbove3 + 0.7744 * crpAbove112mgl;
