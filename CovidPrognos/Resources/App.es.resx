@@ -123,11 +123,41 @@
   <data name="Admission date" xml:space="preserve">
     <value>F.Admisión</value>
   </data>
+  <data name="Admission date is required" xml:space="preserve">
+    <value>Introduzca fecha de admisión</value>
+  </data>
+  <data name="Admission date tests" xml:space="preserve">
+    <value>Tests en la fecha de admisión</value>
+  </data>
   <data name="Age" xml:space="preserve">
     <value>Edad</value>
   </data>
+  <data name="Age should be between 1 and 110" xml:space="preserve">
+    <value>Rango edad válido entre 1 y 110</value>
+  </data>
+  <data name="C-reactive protein" xml:space="preserve">
+    <value>Proteína C reactiva</value>
+  </data>
+  <data name="C-reactive protein level is required" xml:space="preserve">
+    <value>Seleccione nivel Proteína C reactiva</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Eliminar</value>
+  </data>
   <data name="Edit" xml:space="preserve">
     <value>Editar</value>
+  </data>
+  <data name="Neutrophils" xml:space="preserve">
+    <value>Neutrófilos</value>
+  </data>
+  <data name="Neutrophils level should be between 200 and 20,000" xml:space="preserve">
+    <value>Introduzca valor entre 200 y 20.000</value>
+  </data>
+  <data name="O2 Saturation" xml:space="preserve">
+    <value>Saturación O2</value>
+  </data>
+  <data name="O2 saturation is required" xml:space="preserve">
+    <value>Seleccione saturación O2</value>
   </data>
   <data name="Only use with PCR positive patients" xml:space="preserve">
     <value>Sólo para pacientes con PCR positiva</value>
@@ -135,7 +165,28 @@
   <data name="Patient" xml:space="preserve">
     <value>Paciente</value>
   </data>
+  <data name="Patient is required" xml:space="preserve">
+    <value>Introduzca el paciente</value>
+  </data>
   <data name="Patients" xml:space="preserve">
     <value>Pacientes</value>
+  </data>
+  <data name="Platelets" xml:space="preserve">
+    <value>Plaquetas</value>
+  </data>
+  <data name="Platelets level should be between 10,000 and 900,000" xml:space="preserve">
+    <value>Introduzca un valor entre 10.000 y 900.000</value>
+  </data>
+  <data name="Risk score" xml:space="preserve">
+    <value>Riesgo</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Guardar</value>
+  </data>
+  <data name="Select patient sex" xml:space="preserve">
+    <value>Seleccione sexo del paciente</value>
+  </data>
+  <data name="Sex" xml:space="preserve">
+    <value>Sexo</value>
   </data>
 </root>

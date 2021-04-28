@@ -8,7 +8,7 @@
 
 <div class="row">
     <div class="col-6 text-left">
-        <h3>@Localize["Patients"]</h3>
+        <h3>RIM Score NPR</h3>
     </div>
     <div class="col-6 text-right">
         <RadzenButton Text=@Localize["Add"] ButtonStyle="ButtonStyle.Primary" Click="@AddPatient" />
@@ -18,6 +18,7 @@
 <span>
     @Localize["Only use with PCR positive patients"]
 </span>
+@*Todo change Grid to DataList if it is running on a mobile device*@
 <RadzenGrid @ref="grid" Data="@patients" TItem="Patient" AllowSorting="true" Responsive="false" RowSelect="@((args) => OnPatientRowSelected(args))">
     <Columns>
         <RadzenGridColumn TItem="Patient" Property="Name" Title=@Localize["Patient"]>
@@ -29,7 +30,7 @@
         </RadzenGridColumn>
         <RadzenGridColumn TItem="Patient" Property="Age" Title=@Localize["Age"]>
         </RadzenGridColumn>
-        <RadzenGridColumn TItem="Patient" Property="Score" Title="Risk score">
+        <RadzenGridColumn TItem="Patient" Property="Score" Title=@Localize["Risk score"]>
             <Template Context="data">
                 @if (data.NPRScore < 50)
                 {
