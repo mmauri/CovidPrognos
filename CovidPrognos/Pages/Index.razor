@@ -56,6 +56,7 @@
     protected override async Task OnInitializedAsync()
     {
         LoadData();
+        ShowDisclaimer();
     }
 
     void LoadData()
@@ -85,6 +86,10 @@
         patient.Id = id;
         await OnPatientRowSelected(patient);
     }
+    async Task ShowDisclaimer()
+    {
+        dialogService.OpenAsync<RIMScoreDisclaimer>("RIM Score disclaimer");
+    }
 
     //void SaveTestLocalStorage()
     //{
@@ -103,8 +108,8 @@
 
     async Task OnPatientRowSelected(Patient patient)
     {
-        var res = await dialogService.OpenAsync<PatientEdit>(@Localize["Edit"], 
-                                        new Dictionary<string, object>() 
+        var res = await dialogService.OpenAsync<PatientEdit>(@Localize["Edit"],
+                                        new Dictionary<string, object>()
                                         {
                                             { "Patient", patient }
                                         });
