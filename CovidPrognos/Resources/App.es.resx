@@ -144,8 +144,11 @@
   <data name="Delete" xml:space="preserve">
     <value>Eliminar</value>
   </data>
-  <data name="Edit" xml:space="preserve">
-    <value>Editar</value>
+  <data name="Edit patient data" xml:space="preserve">
+    <value>Editar datos paciente</value>
+  </data>
+  <data name="For PCR positive patients" xml:space="preserve">
+    <value>Para pacientes con PCR positiva</value>
   </data>
   <data name="Neutrophils" xml:space="preserve">
     <value>Neutrófilos</value>
@@ -158,9 +161,6 @@
   </data>
   <data name="O2 saturation is required" xml:space="preserve">
     <value>Seleccione saturación O2</value>
-  </data>
-  <data name="Only use with PCR positive patients" xml:space="preserve">
-    <value>Sólo para pacientes con PCR positiva</value>
   </data>
   <data name="Patient" xml:space="preserve">
     <value>Paciente</value>

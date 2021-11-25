@@ -6,51 +6,52 @@
 
 @using Models
 
-<div class="row">
-    <div class="col-6 text-left">
-        <h3>RIM Score NPR</h3>
+<div class="vh-100">
+    <div class="row">
+        <div class="col-6 text-left">
+            <h3>RIM Score NPR</h3>
+        </div>
+        <div class="col-6 text-right">
+            <RadzenButton Text=@Localize["Add"] ButtonStyle="ButtonStyle.Primary" Click="@AddPatient" />
+        </div>
     </div>
-    <div class="col-6 text-right">
-        <RadzenButton Text=@Localize["Add"] ButtonStyle="ButtonStyle.Primary" Click="@AddPatient" />
-        @*<RadzenButton Text="Load" ButtonStyle="ButtonStyle.Primary" Click="@LoadData" />*@
-    </div>
+    <span>
+        @Localize["For PCR positive patients"]
+    </span>
+    @*Todo change Grid to DataList if it is running on a mobile device*@
+    <RadzenDataGrid @ref="grid" Data="@patients" TItem="Patient" AllowSorting="true" 
+        RowSelect="@((args) => OnPatientRowSelected(args))">
+        <Columns>
+            <RadzenDataGridColumn  TItem="Patient" Property="Name" Title=@Localize["Patient"] />
+        
+            <RadzenDataGridColumn  TItem="Patient" Property="AdmissionDate" Title=@Localize["Admission date"] >
+                <Template Context="item">
+                    @item.AdmissionDate.ToShortDateString()
+                </Template>
+            </RadzenDataGridColumn >
+            <RadzenDataGridColumn  TItem="Patient" Property="Age" Title=@Localize["Age"] TextAlign="TextAlign.Right" />
+        
+            <RadzenDataGridColumn  TItem="Patient" Property="Score" Title=@Localize["Risk score"] TextAlign="TextAlign.Right">
+                <Template Context="data">
+                    @if (data.NPRScore < 50)
+                    {
+                        <span>@data.NPRScore %</span>
+                    }
+                    else
+                    {
+                        <span style='color:red'>@data.NPRScore %</span>
+                    }
+                </Template>
+            </RadzenDataGridColumn >
+        </Columns>
+    </RadzenDataGrid>
 </div>
-<span>
-    @Localize["Only use with PCR positive patients"]
-</span>
-@*Todo change Grid to DataList if it is running on a mobile device*@
-<RadzenGrid @ref="grid" Data="@patients" TItem="Patient" AllowSorting="true" Responsive="false" RowSelect="@((args) => OnPatientRowSelected(args))">
-    <Columns>
-        <RadzenGridColumn TItem="Patient" Property="Name" Title=@Localize["Patient"]>
-        </RadzenGridColumn>
-        <RadzenGridColumn TItem="Patient" Property="AdmissionDate" Title=@Localize["Admission date"] Width="100px;">
-            <Template Context="item">
-                @item.AdmissionDate.ToShortDateString()
-            </Template>
-        </RadzenGridColumn>
-        <RadzenGridColumn TItem="Patient" Property="Age" Title=@Localize["Age"]>
-        </RadzenGridColumn>
-        <RadzenGridColumn TItem="Patient" Property="Score" Title=@Localize["Risk score"]>
-            <Template Context="data">
-                @if (data.NPRScore < 50)
-                {
-                    <span>@data.NPRScore %</span>
-                }
-                else
-                {
-                    <span style='color:red'>@data.NPRScore %</span>
-                }
-            </Template>
-        </RadzenGridColumn>
-    </Columns>
-</RadzenGrid>
-
 
 @code {
     List<Patient> patients = new List<Patient>();
 
     bool addingPatient = false;
-    RadzenGrid<Patient> grid;
+    RadzenDataGrid<Patient> grid;
 
     //BUG: Blazor WASM cannot debug on the first component Initialized event
     protected override async Task OnInitializedAsync()
@@ -90,21 +91,6 @@
     {
         await dialogService.OpenAsync<RIMScoreDisclaimer>("RIM Score disclaimer");
     }
-
-    //void SaveTestLocalStorage()
-    //{
-    //    var pat = new Patient();
-    //    pat.PatientId = "marc";
-    //    pat.AdmissionDate = DateTime.Today;
-    //    pat.Age = 48;
-    //    pat.IsMale = true;
-
-    //    pat.NPRScore = 0.1;
-
-    //    localStorage.RemoveItem(pat.PatientId);
-
-    //localStorage.SetItem<Patient>(pat.PatientId, pat);
-    //}
 
     async Task OnPatientRowSelected(Patient patient)
     {
