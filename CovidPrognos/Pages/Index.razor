@@ -97,6 +97,7 @@
         var id = patients.Count + 1;
         var patient = new Patient();
         patient.Id = id;
+        patient.AdmissionDate = DateTime.Now;
         await OnPatientRowSelected(patient);
     }
     async Task ShowDisclaimer()
@@ -126,7 +127,7 @@
         {
             patients.Add(patient);
             addingPatient = false;
-            grid.Reload();
+            await grid.Reload();
         }
         UpdatePatient(patient);
 
