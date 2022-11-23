@@ -66,18 +66,29 @@
         string patientKey;
         Patient patient;
 
-        var length = localStorage.Length();
-        if (length == 0) return;
-
-        //localStorage sync access is faster
-        for (var i = 0; i < length; i++)
+        try
         {
-            patientKey = localStorage.Key(i);
-            patient = localStorage.GetItem<Patient>(patientKey);
-            patients.Add(patient);
-        }
+            var length = localStorage.Length();
+            if (length == 0) return;
 
-        //grid.Reload();
+            //localStorage sync access is faster
+            for (var i = 0; i < length; i++)
+            {
+                patientKey = localStorage.Key(i);
+                try
+                {
+                    patient = localStorage.GetItem<Patient>(patientKey);
+                    patients.Add(patient);
+                }
+                catch { }
+            }
+
+            //grid.Reload();
+        }
+        catch(Exception ex)
+        {
+            notificationService.Notify(NotificationSeverity.Error, "Error", ex.Message);
+        }
     }
 
     async Task AddPatient()
